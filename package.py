@@ -9,3 +9,9 @@ class Package:
         self.notes = notes
         self.loadingTime = loadingTime
         self.deliveryTime = deliveryTime
+
+    def __str__(self):
+        return print(f'id: {self.id}\ncity: {self.city}\nstate: {self.state}\nzip: {self.zip}\ndeadline: {self.deadline}\n weight: {self.weight}\nloading Time: {self.loadingTime}\ndeliveryTime: {self.loadingTime}\n')
+
+    def __repr__(self):
+        return print(f'id: {self.id}\ncity: {self.city}\nstate: {self.state}\nzip: {self.zip}\ndeadline: {self.deadline}\n weight: {self.weight}\nloading Time: {self.loadingTime}\ndeliveryTime: {self.loadingTime}\n')
