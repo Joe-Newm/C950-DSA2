@@ -1,3 +1,5 @@
+# Joseph Newman, Student ID: 012380140
+
 from package import Package
 from hashTable import HashTable
 
