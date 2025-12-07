@@ -18,9 +18,13 @@ class HashTable:
         return None
     
     def __str__(self):
+        buckets = ''
         for i, bucket in enumerate(self.table):
-            return f'bucket {i}: {bucket}'
+            buckets += f'bucket {i}:\n {bucket}\n\n'
+        return buckets
 
     def __repr__(self):
+        buckets = ''
         for i, bucket in enumerate(self.table):
-            return f'bucket {i}: {bucket}'
+            buckets += f'bucket {i}:\n {bucket}\n\n'
+        return buckets
