@@ -4,7 +4,7 @@ class HashTable:
         self.table = [[] for _ in range(bucket)]
 
     def hash(self, key):
-        return (key % self.bucket)
+        return (int(key) % self.bucket)
     
     def insertItem(self, object):
         index = self.hash(object.id)
@@ -19,8 +19,8 @@ class HashTable:
     
     def __str__(self):
         for i, bucket in enumerate(self.table):
-            print(f'bucket {i}: {bucket}\n')
+            return f'bucket {i}: {bucket}'
 
     def __repr__(self):
         for i, bucket in enumerate(self.table):
-            print(f'bucket {i}: {bucket}\n')
+            return f'bucket {i}: {bucket}'
