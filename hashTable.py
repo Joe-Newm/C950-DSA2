@@ -20,11 +20,18 @@ class HashTable:
     def __str__(self):
         buckets = ''
         for i, bucket in enumerate(self.table):
-            buckets += f'bucket {i}:\n {bucket}\n\n'
+            buckets += f'\nbucket {i}:'
+            buckets += '\n'
+            buckets += '---------------------------------------------------------------------'
+            buckets += '\n'
+            for item in bucket:
+                buckets += f'{item} \n'
         return buckets
 
     def __repr__(self):
         buckets = ''
         for i, bucket in enumerate(self.table):
-            buckets += f'bucket {i}:\n {bucket}\n\n'
+            buckets += f'bucket {i}:\n'
+            for item in bucket:
+                buckets += f'{item}\n\n'
         return buckets
