@@ -39,6 +39,7 @@ def createDistanceData():
 
     return distances
 
+# This function will always make the greater index first for finding distances so that it always works correctly
 def getDistance(index1, index2):
     distances = createDistanceData()
 
@@ -47,17 +48,33 @@ def getDistance(index1, index2):
     else:
         return distances[index2][index1]
 
-def createDictionary():
-    dict = {}
+# opens addresses.csv and appends each line to an array with the correct index to be used to find distances
+def createLocationIndex():
+    list = []
     with open("addresses.csv") as file:
         lines = file.readlines()
 
-def findNearestPackage(truck, table, distances):
+        for line in lines:
+            value = line.strip()
+            list.append(value)
+
+    return list
+
+# maps the location value to index that can be used for finding distance between locations
+def getLocationIndex(value):
+    locationList = createLocationIndex()
+    return locationList.index(value)    
+    
+
+def findNearestPackage(truck, table):
     currentLocation = "4001 South 700 East"
+    shortestDistance = None
+
     for packageid in truck:
         packageObj = table.lookUp(str(packageid))
         packageLocation = packageObj.address
         print(packageLocation)
+        print(getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation)))
 
 
         
@@ -70,7 +87,6 @@ def findNearestPackage(truck, table, distances):
 
 def main():
     table = createTable()
-    distances = createDistanceData()
     print(table)
     #print(distances[2][1]) should be 7.1
 
@@ -81,7 +97,7 @@ def main():
     # truck 3 
     truck3 = [5, 8, 9, 23, 24, 26, 33, 35]
 
-    findNearestPackage(truck1, table, distances)
+    findNearestPackage(truck1, table)
 
 
 
