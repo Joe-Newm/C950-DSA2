@@ -3,6 +3,7 @@
 from package import Package
 from hashTable import HashTable
 
+
 # function for creating table populated with packages.csv file
 def createTable():
     table = HashTable(10)
@@ -24,6 +25,7 @@ def createTable():
             table.insertItem(p)
     return table
 
+
 # create list of lists with the distances floats from distances.csv
 def createDistanceData():
     distances = []
@@ -39,14 +41,16 @@ def createDistanceData():
 
     return distances
 
+
 # This function will always make the greater index first for finding distances so that it always works correctly
 def getDistance(index1, index2):
     distances = createDistanceData()
 
     if index1 >= index2:
-        return distances[index1][index2]
+        return float(distances[index1][index2])
     else:
-        return distances[index2][index1]
+        return float(distances[index2][index1])
+
 
 # opens addresses.csv and appends each line to an array with the correct index to be used to find distances
 def createLocationIndex():
@@ -60,6 +64,7 @@ def createLocationIndex():
 
     return list
 
+
 # maps the location value to index that can be used for finding distance between locations
 def getLocationIndex(value):
     locationList = createLocationIndex()
@@ -68,26 +73,25 @@ def getLocationIndex(value):
 
 def findNearestPackage(truck, table):
     currentLocation = "4001 South 700 East"
-    shortestDistance = None
+    shortestDistance = 9000
 
     for packageid in truck:
         packageObj = table.lookUp(str(packageid))
         packageLocation = packageObj.address
-        print(packageLocation)
-        print(getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation)))
+        currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
+        #print(packageLocation)
+        #print(currDistance, "\n")
 
+        if shortestDistance > currDistance:
+            shortestDistance = currDistance
 
-        
-        
-        
-        
-
+    print(shortestDistance)
 
 ##################################################### main #####################################################
 
 def main():
     table = createTable()
-    print(table)
+    #print(table)
     #print(distances[2][1]) should be 7.1
 
     # truck 1 
