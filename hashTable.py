@@ -10,10 +10,10 @@ class HashTable:
         index = self.hash(object.id)
         self.table[index].append((object.id, object))
 
-    def lookUp(self, object):
-        index = self.hash(object.id)
+    def lookUp(self, id):
+        index = self.hash(id)
         for key, obj in self.table[index]:
-            if key == object.id:
+            if key == id:
                 return obj    
         return None
     
