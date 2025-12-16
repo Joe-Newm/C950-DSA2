@@ -2,6 +2,7 @@
 
 from package import Package
 from hashTable import HashTable
+from datetime import datetime, date, time, timedelta
 
 
 # function for creating table populated with packages.csv file
@@ -71,9 +72,14 @@ def getLocationIndex(value):
     return locationList.index(value)    
     
 
+# algorithm for finding the shortest distance from the truck in order to pick next package delivery
 def findNearestPackage(truck, table):
     currentLocation = "4001 South 700 East"
+    # set shortest Distance variable to 9000 just because none are that far and the loop will set it to the shortest distance it can find
     shortestDistance = 9000
+    totalTime = datetime(2025, )
+    #speed of truck
+    speed = 18
 
     for packageid in truck:
         packageObj = table.lookUp(str(packageid))
@@ -84,6 +90,7 @@ def findNearestPackage(truck, table):
 
         if shortestDistance > currDistance:
             shortestDistance = currDistance
+            time = currDistance / speed
 
     print(shortestDistance)
 
