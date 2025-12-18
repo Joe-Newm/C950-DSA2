@@ -74,28 +74,43 @@ def getLocationIndex(value):
 
 # algorithm for finding the shortest distance from the truck in order to pick next package delivery
 def findNearestPackage(truck, table):
+    # variable to keep up with trucks current location. Starts at the hub.
     currentLocation = "4001 South 700 East"
-    # set shortest Distance variable to 9000 just because none are that far and the loop will set it to the shortest distance it can find
-    shortestDistance = 9000
+    # variable to hold the totaltime it takes truck to finish all deliveries
     totalTime = datetime(2025,1,1,8,0,0)
     #speed of truck
     speed = 18
 
-    for packageid in truck:
-        packageObj = table.lookUp(str(packageid))
-        packageLocation = packageObj.address
-        currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
-        #print(packageLocation)
-        #print(currDistance, "\n")
+    while truck:
+        # set shortest Distance variable to 9000 just because none are that far and the loop will set it to the shortest distance it can find
+        shortestDistance = 9000
+        nearestPackage = None
 
-        if shortestDistance > currDistance:
-            shortestDistance = currDistance
+        for packageid in truck:
+            packageObj = table.lookUp(str(packageid))
+            packageLocation = packageObj.address
+            currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
+            #print(packageLocation)
+            #print(currDistance, "\n")
 
+            if shortestDistance > currDistance:
+                shortestDistance = currDistance
+                nearestPackage = packageid
 
-    time = timedelta(hours=shortestDistance / speed)
-    totalTime += time
+        # add time it took to deliver pakcage to totaltime
+        time = timedelta(hours=shortestDistance / speed)
+        totalTime += time
 
-    print(shortestDistance, totalTime)
+        # remove delivered package and change the trucks current location
+        truck.remove(nearestPackage)
+        packageObj = table.lookUp(str(nearestPackage))
+        currentLocation = packageObj.address
+
+        # print statement for testing
+        #print(shortestDistance, totalTime, currentLocation)
+
+    return totalTime
+
 
 ##################################################### main #####################################################
 
