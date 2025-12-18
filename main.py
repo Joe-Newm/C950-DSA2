@@ -104,7 +104,9 @@ def findNearestPackage(truck, table):
         # remove delivered package and change the trucks current location
         truck.remove(nearestPackage)
         packageObj = table.lookUp(str(nearestPackage))
+        packageObj.deliveryTime = totalTime
         currentLocation = packageObj.address
+        print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\n')
 
         # print statement for testing
         #print(shortestDistance, totalTime, currentLocation)
@@ -127,6 +129,12 @@ def main():
     truck3 = [5, 8, 9, 23, 24, 26, 33, 35]
 
     findNearestPackage(truck1, table)
+    print("\n")
+    print("\n")
+    findNearestPackage(truck2, table)
+    print("\n")
+    print("\n")
+    findNearestPackage(truck3, table)
 
 
 
