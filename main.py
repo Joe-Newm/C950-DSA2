@@ -77,7 +77,7 @@ def findNearestPackage(truck, table):
     currentLocation = "4001 South 700 East"
     # set shortest Distance variable to 9000 just because none are that far and the loop will set it to the shortest distance it can find
     shortestDistance = 9000
-    totalTime = datetime(2025, )
+    totalTime = datetime(2025,1,1,8,0,0)
     #speed of truck
     speed = 18
 
@@ -90,9 +90,12 @@ def findNearestPackage(truck, table):
 
         if shortestDistance > currDistance:
             shortestDistance = currDistance
-            time = currDistance / speed
 
-    print(shortestDistance)
+
+    time = timedelta(hours=shortestDistance / speed)
+    totalTime += time
+
+    print(shortestDistance, totalTime)
 
 ##################################################### main #####################################################
 
