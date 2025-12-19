@@ -73,13 +73,16 @@ def getLocationIndex(value):
     
 
 # algorithm for finding the shortest distance from the truck in order to pick next package delivery
-def findNearestPackage(truck, table):
+def findNearestPackage(truck, table, totalTime):
     # variable to keep up with trucks current location. Starts at the hub.
     currentLocation = "4001 South 700 East"
-    # variable to hold the totaltime it takes truck to finish all deliveries
-    totalTime = datetime(2025,1,1,8,0,0)
     #speed of truck
     speed = 18
+
+    # update each package on each truck with loadingTime 
+    for packageid in truck:
+        packageObj = table.lookUp(str(packageid))
+        packageObj.loadingTime = totalTime
 
     while truck:
         # set shortest Distance variable to 9000 just because none are that far and the loop will set it to the shortest distance it can find
@@ -106,7 +109,7 @@ def findNearestPackage(truck, table):
         packageObj = table.lookUp(str(nearestPackage))
         packageObj.deliveryTime = totalTime
         currentLocation = packageObj.address
-        print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\n')
+        print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\nloading time: {packageObj.loadingTime}\n')
 
         # print statement for testing
         #print(shortestDistance, totalTime, currentLocation)
@@ -128,13 +131,16 @@ def main():
     # truck 3 
     truck3 = [5, 8, 9, 23, 24, 26, 33, 35]
 
-    findNearestPackage(truck1, table)
+    departureTime = datetime(2025,1,1,8,0,0)
+
+    truck1Time = findNearestPackage(truck1, table, departureTime)
     print("\n")
     print("\n")
-    findNearestPackage(truck2, table)
+    truck2Time = findNearestPackage(truck2, table, departureTime)
     print("\n")
     print("\n")
-    findNearestPackage(truck3, table)
+    # truck 3 leaves when truck1 gets back so i take truck1 time when finishing its deliverys and add 3.7 miles at 18mph to get back to hub and that is when truck 3 departs
+    truck3Time = findNearestPackage(truck3, table, truck1Time + timedelta(hours=3.7 / 18))
 
 
 

@@ -8,8 +8,8 @@ class Package:
         self.deadline = deadline
         self.weight = weight
         self.notes = notes
-        self.loadingTime = 0 
-        self.deliveryTime = 0
+        self.loadingTime = None
+        self.deliveryTime = None
 
     def __str__(self):
         return f'id: {self.id} address: {self.address} city: {self.city} state: {self.state} zip: {self.zip} deadline: {self.deadline} weight: {self.weight} notes: {self.notes} loading Time: {self.loadingTime} deliveryTime: {self.loadingTime}'
