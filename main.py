@@ -78,6 +78,8 @@ def findNearestPackage(truck, table, totalTime):
     currentLocation = "4001 South 700 East"
     #speed of truck
     speed = 18
+    correctionTime = datetime(2025,1,1,10,20,0)
+    truckMileage = 0
 
     # update each package on each truck with loadingTime 
     for packageid in truck:
@@ -91,7 +93,16 @@ def findNearestPackage(truck, table, totalTime):
 
         for packageid in truck:
             packageObj = table.lookUp(str(packageid))
+
+            # check wrong address constraints for packages
+            if "Wrong address" in packageObj.notes and totalTime < correctionTime:
+                    continue
+            
+
             packageLocation = packageObj.address
+            if "Wrong address" in packageObj.notes:
+                packageLocation = "410 S State St"
+
             currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
             #print(packageLocation)
             #print(currDistance, "\n")
@@ -104,17 +115,22 @@ def findNearestPackage(truck, table, totalTime):
         time = timedelta(hours=shortestDistance / speed)
         totalTime += time
 
+        # add mileage
+        truckMileage += shortestDistance
+
         # remove delivered package and change the trucks current location
         truck.remove(nearestPackage)
         packageObj = table.lookUp(str(nearestPackage))
         packageObj.deliveryTime = totalTime
         currentLocation = packageObj.address
-        print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\nloading time: {packageObj.loadingTime}\n')
+
+        # print package info for testing
+        #print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\nloading time: {packageObj.loadingTime}\n')
 
         # print statement for testing
         #print(shortestDistance, totalTime, currentLocation)
 
-    return totalTime
+    return totalTime, truckMileage
 
 
 ##################################################### main #####################################################
@@ -124,25 +140,70 @@ def main():
     #print(table)
     #print(distances[2][1]) should be 7.1
 
-    # truck 1 
-    truck1 = [1, 13, 14, 15, 16, 19, 20, 21, 27, 29, 30, 31, 34, 37, 39, 40]
-    # truck 2 
-    truck2 = [2, 3, 4, 6, 7, 10, 11, 12, 17, 18, 22, 25, 28, 32, 36, 38]
-    # truck 3 
-    truck3 = [5, 8, 9, 23, 24, 26, 33, 35]
+    # these are for keeping the initial loading sequence later for console interface
+    truck1Load = [1, 13, 14, 15, 16, 19, 20, 21, 27, 29, 30, 31, 34, 37, 39, 40]
+    truck2Load = [2, 3, 4, 5, 7, 10, 11, 12, 17, 18, 22, 8, 23, 24, 36, 38]
+    truck3Load = [6, 25, 9, 28, 32, 26, 33, 35]
 
+    # these lists are the actual trucks and their lists will be manipulated in the delivery algorithm
+    truck1 = [1, 13, 14, 15, 16, 19, 20, 21, 27, 29, 30, 31, 34, 37, 39, 40]
+    truck2 = [2, 3, 4, 5, 7, 10, 11, 12, 17, 18, 22, 8, 23, 24, 36, 38]
+    truck3 = [6, 25, 9, 28, 32, 26, 33, 35]
+
+    # this is departure time for truck 1 and 2, truck3 departs when truck 1 returns to hub
     departureTime = datetime(2025,1,1,8,0,0)
 
-    truck1Time = findNearestPackage(truck1, table, departureTime)
-    print("\n")
-    print("\n")
-    truck2Time = findNearestPackage(truck2, table, departureTime)
-    print("\n")
-    print("\n")
+    truck1Time, truck1Mileage = findNearestPackage(truck1, table, departureTime)
+    truck2Time, truck2Mileage = findNearestPackage(truck2, table, departureTime)
     # truck 3 leaves when truck1 gets back so i take truck1 time when finishing its deliverys and add 3.7 miles at 18mph to get back to hub and that is when truck 3 departs
-    truck3Time = findNearestPackage(truck3, table, truck1Time + timedelta(hours=3.7 / 18))
+    truck3Time, truck3Mileage = findNearestPackage(truck3, table, truck1Time + timedelta(hours=3.7 / 18))
+
+    # code for console interface
+    selectedTime = input("hello, please pick a time to check statuses of all packages. (HH:MM)\n")
+
+    # map user input time to datetime obj that can be used as comparison with packages loading and delivery time
+    hour, minute = map(int, selectedTime.split(":"))
+    checkTime = datetime(2025, 1, 1, hour, minute)
+
+    # if statements for checking package statuses based on the user input time
+    delayedPackages = [6,25,28,32]
+    for bucket in table.table:
+        for item in bucket:
+            package = item[1]
 
 
+            # constraint for package #9 wrong address
+            if int(package.id) == 9 and checkTime > datetime(2025,1,1,10,20,0):
+                package.address = "410 S State St"
+
+            # constraints for packages 6, 25, 28, 32
+            elif int(package.id) in delayedPackages and checkTime < datetime(2025,1,1,9,5,0):
+                status = "DELAYED"
+
+            elif checkTime < package.loadingTime:
+                status = "At hub"
+
+            elif checkTime < package.deliveryTime:
+                status = "En route"
+
+            else:
+                status = f"Delivered at {package.deliveryTime.time()}"
+
+            # output which truck package was on
+            if int(package.id) in truck1Load:
+                print(f"Package {package.id}: {status} on truck 1")
+                print(f"delivery address: {package.address}\n")
+            if int(package.id) in truck2Load:
+                print(f"Package {package.id}: {status} on truck 2")
+                print(f"delivery address: {package.address}\n")
+            if int(package.id) in truck3Load:
+                print(f"Package {package.id}: {status} on truck 3")
+                print(f"delivery address: {package.address}\n")
+
+    print(f"truck 1 total mileage: {truck1Mileage}")
+    print(f"truck 2 total mileage: {truck2Mileage}")
+    print(f"truck 3 total mileage: {truck3Mileage}")
+    print(f"total mileage of all trucks: {truck1Mileage + truck2Mileage + truck3Mileage}")
 
 
 if __name__ == "__main__":
