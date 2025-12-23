@@ -91,8 +91,10 @@ def findNearestPackage(truck, table, totalTime):
         shortestDistance = 9000
         nearestPackage = None
 
+
         for packageid in truck:
             packageObj = table.lookUp(str(packageid))
+
 
             # check wrong address constraints for packages
             if "Wrong address" in packageObj.notes and totalTime < correctionTime:
@@ -106,6 +108,9 @@ def findNearestPackage(truck, table, totalTime):
             currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
             #print(packageLocation)
             #print(currDistance, "\n")
+
+
+
 
             if shortestDistance > currDistance:
                 shortestDistance = currDistance
@@ -192,12 +197,15 @@ def main():
             # output which truck package was on
             if int(package.id) in truck1Load:
                 print(f"Package {package.id}: {status} on truck 1")
+                print(f"Package deadline: {package.deadline}")
                 print(f"delivery address: {package.address}\n")
             if int(package.id) in truck2Load:
                 print(f"Package {package.id}: {status} on truck 2")
+                print(f"Package deadline: {package.deadline}")
                 print(f"delivery address: {package.address}\n")
             if int(package.id) in truck3Load:
                 print(f"Package {package.id}: {status} on truck 3")
+                print(f"Package deadline: {package.deadline}")
                 print(f"delivery address: {package.address}\n")
 
     print(f"truck 1 total mileage: {truck1Mileage}")
