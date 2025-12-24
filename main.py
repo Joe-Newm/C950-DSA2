@@ -105,16 +105,21 @@ def findNearestPackage(truck, table, totalTime):
             if "Wrong address" in packageObj.notes:
                 packageLocation = "410 S State St"
 
+
+            
             currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
             #print(packageLocation)
             #print(currDistance, "\n")
 
 
-
-
-            if shortestDistance > currDistance:
-                shortestDistance = currDistance
+            # deliver package 6 first in order to meet deadline
+            if packageid == 6:
+                shortestDistance = getDistance(getLocationIndex(packageObj.address), getLocationIndex(currentLocation))
                 nearestPackage = packageid
+            else:
+                if shortestDistance > currDistance:
+                    shortestDistance = currDistance
+                    nearestPackage = packageid
 
         # add time it took to deliver pakcage to totaltime
         time = timedelta(hours=shortestDistance / speed)
@@ -155,13 +160,13 @@ def main():
     truck2 = [2, 3, 4, 5, 7, 10, 11, 12, 17, 18, 22, 8, 23, 24, 36, 38]
     truck3 = [6, 25, 9, 28, 32, 26, 33, 35]
 
-    # this is departure time for truck 1 and 2, truck3 departs when truck 1 returns to hub
+    # this is departure time for truck 1 and 2, truck3 departs when truck 1 is finished
     departureTime = datetime(2025,1,1,8,0,0)
 
     truck1Time, truck1Mileage = findNearestPackage(truck1, table, departureTime)
     truck2Time, truck2Mileage = findNearestPackage(truck2, table, departureTime)
-    # truck 3 leaves when truck1 gets back so i take truck1 time when finishing its deliverys and add 3.7 miles at 18mph to get back to hub and that is when truck 3 departs
-    truck3Time, truck3Mileage = findNearestPackage(truck3, table, truck1Time + timedelta(hours=3.7 / 18))
+    # truck 3 leaves when truck1 gets finished
+    truck3Time, truck3Mileage = findNearestPackage(truck3, table, truck1Time)
 
     # code for console interface
     selectedTime = input("hello, please pick a time to check statuses of all packages. (HH:MM)\n")
@@ -196,17 +201,29 @@ def main():
 
             # output which truck package was on
             if int(package.id) in truck1Load:
-                print(f"Package {package.id}: {status} on truck 1")
+                print(f"Package {package.id}")
+                print(f"Status: {status} on truck 1")
+                print(f"Package Loading Time: {package.loadingTime}")
                 print(f"Package deadline: {package.deadline}")
-                print(f"delivery address: {package.address}\n")
+                print(f"delivery address: {package.address}")
+                print(f"Package Constraints: {package.notes}\n")
+                print(f"---------------------------------------------------------------------------------------------\n")
             if int(package.id) in truck2Load:
-                print(f"Package {package.id}: {status} on truck 2")
+                print(f"Package {package.id}")
+                print(f"Status: {status} on truck 2")
+                print(f"Package Loading Time: {package.loadingTime}")
                 print(f"Package deadline: {package.deadline}")
-                print(f"delivery address: {package.address}\n")
+                print(f"delivery address: {package.address}")
+                print(f"Package Constraints: {package.notes}\n")
+                print(f"---------------------------------------------------------------------------------------------\n")
             if int(package.id) in truck3Load:
-                print(f"Package {package.id}: {status} on truck 3")
+                print(f"Package {package.id}")
+                print(f"Status: {status} on truck 3")
+                print(f"Package Loading Time: {package.loadingTime}")
                 print(f"Package deadline: {package.deadline}")
-                print(f"delivery address: {package.address}\n")
+                print(f"delivery address: {package.address}")
+                print(f"Package Constraints: {package.notes}\n")
+                print(f"---------------------------------------------------------------------------------------------\n")
 
     print(f"truck 1 total mileage: {truck1Mileage}")
     print(f"truck 2 total mileage: {truck2Mileage}")
