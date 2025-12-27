@@ -94,32 +94,16 @@ def findNearestPackage(truck, table, totalTime):
 
         for packageid in truck:
             packageObj = table.lookUp(str(packageid))
-
-
-            # check wrong address constraints for packages
-            if "Wrong address" in packageObj.notes and totalTime < correctionTime:
-                    continue
-            
-
             packageLocation = packageObj.address
-            if "Wrong address" in packageObj.notes:
-                packageLocation = "410 S State St"
-
-
             
             currDistance = getDistance(getLocationIndex(packageLocation), getLocationIndex(currentLocation))
             #print(packageLocation)
             #print(currDistance, "\n")
 
 
-            # deliver package 6 first in order to meet deadline
-            if packageid == 6:
-                shortestDistance = getDistance(getLocationIndex(packageObj.address), getLocationIndex(currentLocation))
+            if shortestDistance > currDistance:
+                shortestDistance = currDistance
                 nearestPackage = packageid
-            else:
-                if shortestDistance > currDistance:
-                    shortestDistance = currDistance
-                    nearestPackage = packageid
 
         # add time it took to deliver pakcage to totaltime
         time = timedelta(hours=shortestDistance / speed)
@@ -130,9 +114,9 @@ def findNearestPackage(truck, table, totalTime):
 
         # remove delivered package and change the trucks current location
         truck.remove(nearestPackage)
-        packageObj = table.lookUp(str(nearestPackage))
-        packageObj.deliveryTime = totalTime
-        currentLocation = packageObj.address
+        deliveredPackage = table.lookUp(str(nearestPackage))
+        deliveredPackage.deliveryTime = totalTime
+        currentLocation = deliveredPackage.address
 
         # print package info for testing
         #print(f'package id: {packageObj.id}\npackage constraints: {packageObj.notes}\ntime delivered: {packageObj.deliveryTime}\nloading time: {packageObj.loadingTime}\n')
@@ -169,7 +153,7 @@ def main():
     truck3Time, truck3Mileage = findNearestPackage(truck3, table, truck1Time)
 
     # code for console interface
-    selectedTime = input("hello, please pick a time to check statuses of all packages. (HH:MM)\n")
+    selectedTime = input("Hello, please pick a time to check statuses of all packages. (HH:MM)\n")
 
     # map user input time to datetime obj that can be used as comparison with packages loading and delivery time
     hour, minute = map(int, selectedTime.split(":"))
@@ -187,7 +171,7 @@ def main():
                 package.address = "410 S State St"
 
             # constraints for packages 6, 25, 28, 32
-            elif int(package.id) in delayedPackages and checkTime < datetime(2025,1,1,9,5,0):
+            if int(package.id) in delayedPackages and checkTime < datetime(2025,1,1,9,5,0):
                 status = "DELAYED"
 
             elif checkTime < package.loadingTime:
